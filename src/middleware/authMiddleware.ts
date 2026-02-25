@@ -5,6 +5,7 @@ const jwtSecret = process.env.JWT_SECRET!;
 
 interface TokenPayload extends JwtPayload {
     id: string;
+    role: string;
 }
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +19,8 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
         const decoded = jwt.verify(token, jwtSecret) as TokenPayload;
 
         req.user = {
-            id: decoded.id
+            id: decoded.id,
+            role: decoded.role
         }
         next();
     } catch (error) {

@@ -5,7 +5,7 @@ import  jwt  from "jsonwebtoken";
 
 const JWTSECRET = process.env.JWT_SECRET!;
 export const signup = async (req:Request, res: Response) => {
-    const {email,password} = req.body;
+    const {email,password, role} = req.body;
 
     const existing = await prisma.user.findUnique({
         where: {email}
@@ -16,10 +16,10 @@ export const signup = async (req:Request, res: Response) => {
     const hashed = await bcrypt.hash(password,10);
 
     const user = await prisma.user.create({
-        data: {email: email, password: hashed}
+        data: {email: email, password: hashed, role: role}
     })
     
-    res.status(200).json({id: user.id, email: user.email})
+    res.status(200).json({id: user.id, email: user.email, role: user.role})
 }
 
 export const login = async (req:Request, res:Response) => {
@@ -31,7 +31,7 @@ export const login = async (req:Request, res:Response) => {
     const valid = await bcrypt.compare(password, user.password);
     if(!valid) throw new Error("Invalid Credentials");
 
-    const token = jwt.sign({id: user.id}, JWTSECRET, {expiresIn: '1d'})
+    const token = jwt.sign({id: user.id, role: user.role}, JWTSECRET, {expiresIn: '1d'})
 
     res.json(token)
 }

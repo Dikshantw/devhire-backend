@@ -3,6 +3,7 @@ declare {
         interface Request {
             user?: {
                 id: string;
+                role: string;
             };
         }
     }
