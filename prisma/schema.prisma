@@ -26,3 +26,24 @@ model User {
   role      Role     @default(SEEKER)
   createdAt DateTime @default(now())
 }
+
+model Company {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  jobs Job[]
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  location    String
+  salaryMin   Int?
+  salaryMax   Int?
+  createdAt   DateTime @default(now())
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
+}
