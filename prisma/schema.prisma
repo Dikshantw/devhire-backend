@@ -25,14 +25,18 @@ model User {
   password  String
   role      Role     @default(SEEKER)
   createdAt DateTime @default(now())
+
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
 }
 
 model Company {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
-  description String
+  description String?
 
-  jobs Job[]
+  recruiters User[]
+  jobs       Job[]
 }
 
 model Job {
