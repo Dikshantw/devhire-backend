@@ -22,8 +22,14 @@ export const createJob = async(req: Request, res: Response) => {
         throw new Error("Only recruiters can post jobs")
     }
     // also recruiter must belong to the company
+    const recruiter = await prisma.user.findUnique({
+        where: {id: user.id}
+    })
+    if(!recruiter?.companyId){
+        throw new Error("Recruiter must belong to the company")
+    }
     const job = await prisma.job.create({
-        data: {...jobData}
+        data: {...jobData, companyId: recruiter.companyId}
     })
     res.status(200).json(job)
 }
