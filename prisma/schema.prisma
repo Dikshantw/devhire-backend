@@ -28,6 +28,8 @@ model User {
 
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
+
+  applications Application[]
 }
 
 model Company {
@@ -50,4 +52,26 @@ model Job {
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId String
+
+  applications Application[]
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  REJECTED
+}
+
+model Application {
+  id        String            @id @default(uuid())
+  status    ApplicationStatus @default(APPLIED)
+  createdAt DateTime          @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  job   Job    @relation(fields: [jobId], references: [id])
+  jobId String
+
+  @@unique([userId, jobId])
 }
