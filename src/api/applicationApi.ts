@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
+import { emailQueue } from "../queues/email.js";
 
 export const apply = async (req: Request, res:Response) => {
     const user = req.user;
@@ -23,6 +24,14 @@ export const apply = async (req: Request, res:Response) => {
             userId: user.id,
             jobId: jobId as string
         }
+    })
+    const userData = await prisma.user.findUnique({
+        where: {id: user.id}
+    })
+    await emailQueue.add("application-email",{
+        to: userData?.email,
+        subject: "Application Received",
+        text: "Your job application has been successfully submitted"
     })
     res.status(201).json(application)
 }
